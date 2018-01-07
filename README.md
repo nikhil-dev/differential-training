@@ -9,7 +9,7 @@ The goal is to train a RL system that learns a difference of value functions in 
 
 The main idea idea comes from a 1997 paper [Differential Training of Rollout Policies, by Bertsekas](http://web.mit.edu/dimitrib/www/Diftrain.pdf). The paper introduces a technique called differential training and argues that under simulation and approximation error, learning a difference of value functions  can do better than learning vanilla value functions.
 
-Instead of learning a difference of value function as suggested by Bertsekas, in this work we introduce a version of DDPG, which instead of learning a ```Q(state, action)``` function, learns a difference of Q function ```Q(state1, action1, state2, action2)``` which approximates the difference of expected Q-values under the current policy. We use the gradient from this function to update the policy network in DDPG. 
+Instead of learning a difference of value function as suggested by Bertsekas, in this work I introduce a variant of DDPG ([Deep Deterministic Policy Gradients](https://arxiv.org/abs/1509.02971)), which instead of learning a ```Q(state, action)``` function, learns a difference of Q function ```Q(state1, action1, state2, action2)``` which approximates the difference of expected Q-values between two ```state, action``` pairs under the current policy. We use the gradient from this function to train the policy network in DDPG. 
 
 ## Implementation Details
 
