@@ -25,3 +25,8 @@ This model has been ported to Tensorflow Eager, which gives us a better Pythonic
 
 1. Install [OpenAI Gym and Mujoco](https://github.com/openai/gym) (needs a software license).
 2. Install Tensorflow from the nightly build (we need nightly builds for TF Eager unless you have >=1.5)
+
+### Instructions to for installation
+
+Apply the concept of differential training to other Deep RL methods and see if this gives us benefits in the presence of simulation error.
+
