@@ -1,4 +1,4 @@
-# Difference Critic. 
+# Difference Critic
 
 ## Motivation
 
