@@ -2,9 +2,11 @@ import argparse
 import time
 import os
 
-import gym
 import tensorflow as tf
 import tensorflow.contrib.eager as tfe
+import gym
+import pybullet
+import pybullet_envs
 
 from models import Actor, Critic, DifferenceCritic
 from memory import Memory
@@ -22,7 +24,7 @@ def run(env_id, seed, batch_norm, evaluation, **kwargs):
 	nb_actions = env.action_space.shape[-1]
 	nb_obs = env.observation_space.shape[-1]
 
-	# Configure actor, critic, difference critic and memory
+	# Configure actor, critic, difference critic and replay buffer
 	memory = Memory(limit=int(1e6), action_shape=env.action_space.shape, observation_shape=env.observation_space.shape)
 	critic = Critic(nb_actions=nb_actions, nb_obs=nb_obs, layer_norm=batch_norm)
 	actor = Actor(nb_actions, nb_obs, layer_norm=batch_norm)
@@ -48,13 +50,11 @@ def run(env_id, seed, batch_norm, evaluation, **kwargs):
 def parse_args():
 	parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-	parser.add_argument('--env-id', type=str, default='HalfCheetah-v1')
-	parser.add_argument('--render-eval', action='store_true')
-	parser.add_argument('--use-difference-critic', action='store_true')
+	# Learning hyperparameters
+	parser.add_argument('--env-id', type=str, default='HopperBulletEnv-v0')
 	parser.add_argument('--disable-batch-norm', action='store_true')
-	parser.add_argument('--render', action='store_true')
-	parser.add_argument('--normalize-returns', action='store_true')
-	parser.add_argument('--normalize-observations', action='store_true')
+	parser.add_argument('--normalize-returns', action='store_true') # this param is ignored
+	parser.add_argument('--normalize-observations', action='store_true') # this param is ignored
 	parser.add_argument('--seed', help='RNG seed', type=int, default=0)
 	parser.add_argument('--critic-l2-reg', type=float, default=1e-2)
 	parser.add_argument('--batch-size', type=int, default=64)  # per MPI worker
@@ -70,8 +70,25 @@ def parse_args():
 	parser.add_argument('--nb-eval-steps', type=int, default=100)  # per epoch cycle and MPI worker
 	parser.add_argument('--nb-rollout-steps', type=int, default=100)  # per epoch cycle and MPI worker
 	parser.add_argument('--num-timesteps', type=int, default=None)
+
+	# Run settings
+	parser.add_argument('--render', action='store_true')
+	parser.add_argument('--render-eval', action='store_true')
 	parser.add_argument('--evaluation', action='store_true')
-	parser.add_argument('--checkpoint-dir', default='/tmp/ddpg/hello-world/4')
+	parser.add_argument('--checkpoint-dir', default='/tmp/ddpg/hello-world/0')
+
+	'''
+	Model ensemble parameters
+	Can be used to run in different modes: 
+	- DDPG with perfect sim
+	- DDPG with noise
+	- differential DDPG with noise
+	- differential DDPG with perfect sim
+	'''
+	parser.add_argument('--use-difference-critic', action='store_true')
+	parser.add_argument('--observation-noise-multiple', type=float, default=0.)
+	parser.add_argument('--action-noise-multiple', type=float, default=0.)
+
 	args = parser.parse_args()
 	
 	# we don't directly specify timesteps for this script, so make sure that if we do specify them

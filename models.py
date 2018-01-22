@@ -3,6 +3,7 @@ import tensorflow as tf
 import tensorflow.contrib.eager as tfe
 
 class Actor(tfe.Network):
+  """Actor network with two fully connected layers"""
   def __init__(self, nb_actions, nb_obs, layer_norm=True):
 	super(Actor, self).__init__(name='actor_scope')
 	self.nb_actions = nb_actions
@@ -31,6 +32,7 @@ class Actor(tfe.Network):
 
 
 class Critic(tfe.Network):
+  """Critic network with two fully connected layers"""
   def __init__(self, nb_actions, nb_obs, layer_norm=True):
 	super(Critic, self).__init__(name='critic_scope')
 	self.layer_norm = layer_norm
