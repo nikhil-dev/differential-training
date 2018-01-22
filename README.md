@@ -25,6 +25,8 @@ This model has been ported to Tensorflow Eager, which gives us a better Pythonic
 
 1. Install [OpenAI Gym and Mujoco](https://github.com/openai/gym) (needs a software license).
 2. Install Tensorflow from the nightly build (we need nightly builds for TF Eager unless you have >=1.5)
+3. Install pybullet
+4. Install numpy
 
 ## Future work
 
